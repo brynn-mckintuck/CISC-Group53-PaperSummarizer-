@@ -1,4 +1,9 @@
- # module3_guardrails.md
+> Module 03 (Guardrails) handles missing, short, and hallucination checks.
+
+
+> **Change Log (2025-11-27):**  
+> Added `evidence_mode = "strict"` option for stronger fact verification.  
+> Added standardized warning messages for missing/empty and very short sections.
 
 ## Purpose
 Apply safeguards: handle missing/empty and short sections, prevent hallucinations, manage long-paper chunking, and enforce coherence.
@@ -6,6 +11,17 @@ Apply safeguards: handle missing/empty and short sections, prevent hallucination
 ## Inputs
 - **Section outputs** from Module 2.
 - **Chunk plan** and flags from Module 1.
+- **evidence_mode** = "default" | "strict" (NEW)
+
+### Strict Evidence Mode (NEW)
+When `evidence_mode = "strict"`:
+- The summarizer must **only include claims, results, and equations** that appear explicitly in the provided text.  
+- If it cannot find sufficient information to support a section, it must output this standardized warning:
+  > “The source text does not provide enough detail to summarize this section in strict evidence mode.”
+- The system should then:
+  - Omit or blank the unsupported summary.
+  - Tag the section with a flag such as `insufficient_evidence`.
+
 
 ## Outputs
 - **Warnings list** for “Checks & Warnings.”
@@ -24,15 +40,3 @@ Apply safeguards: handle missing/empty and short sections, prevent hallucination
 3. **Hallucination mitigation**
    - Use only content present in section span.
    - If cross-section references are necessary, cite the section name rather than inventing details.
-   - Mark uncertainties explicitly in warnings; never extend beyond textual evidence.
-
-4. **Long-paper chunking (PS2 context-window strategies)**
-   - Summarize per chunk; merge via constrained synthesis respecting original headings.
-   - If any section was truncated due to chunking, add warning “Possible truncation due to context limits.”
-
-5. **Coherence enforcement**
-   - Ensure narrative flow: motivation → methods → results → limitations → implications.
-   - Harmonize terminology; prefer glossary terms to resolve synonyms.
-
-6. **Emit outputs**
-   - Clean summaries, aggregated warnings list, chunking notes for final rendering.
