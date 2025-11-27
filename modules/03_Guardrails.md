@@ -1,9 +1,24 @@
+> **Change Log (2025-11-27):**  
+> Added `evidence_mode = "strict"` option for stronger fact verification.  
+> Added standardized warning messages for missing/empty and very short sections.
+
 ## Purpose
 Apply safeguards: handle missing/empty and short sections, prevent hallucinations, manage long-paper chunking, and enforce coherence.
 
 ## Inputs
 - **Section outputs** from Module 2.
 - **Chunk plan** and flags from Module 1.
+- **evidence_mode** = "default" | "strict" (NEW)
+
+### Strict Evidence Mode (NEW)
+When `evidence_mode = "strict"`:
+- The summarizer must **only include claims, results, and equations** that appear explicitly in the provided text.  
+- If it cannot find sufficient information to support a section, it must output this standardized warning:
+  > “The source text does not provide enough detail to summarize this section in strict evidence mode.”
+- The system should then:
+  - Omit or blank the unsupported summary.
+  - Tag the section with a flag such as `insufficient_evidence`.
+
 
 ## Outputs
 - **Warnings list** for “Checks & Warnings.”
@@ -34,3 +49,11 @@ Apply safeguards: handle missing/empty and short sections, prevent hallucination
 
 6. **Emit outputs**
    - Clean summaries, aggregated warnings list, chunking notes for final rendering.
+
+### Standardized Warning Messages (NEW)
+- **Missing or Empty Section:**  
+  “Section skipped: no usable text was provided.”
+- **Very Short Section (<50 words):**  
+  “Section very short: summary may be incomplete.”
+- **Strict Evidence Insufficient:**  
+  “The source text does not provide enough detail to summarize this section in strict evidence mode.”
